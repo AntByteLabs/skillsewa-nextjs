@@ -48,18 +48,6 @@ pipeline {
       }
     }
 
-    stage('Prisma Generate') {
-      agent {
-        docker {
-          image "${NODE_IMAGE}"
-          reuseNode true
-          args '-u root:root'
-        }
-      }
-      steps {
-        sh 'npx prisma generate'
-      }
-    }
 
     stage('Lint') {
       agent {
@@ -74,18 +62,6 @@ pipeline {
       }
     }
 
-    stage('Build App') {
-      agent {
-        docker {
-          image "${NODE_IMAGE}"
-          reuseNode true
-          args '-u root:root'
-        }
-      }
-      steps {
-        sh 'npm run build'
-      }
-    }
 
     stage('Docker Build') {
       steps {
@@ -100,12 +76,14 @@ pipeline {
     stage('Deploy Production') {
       steps {
         withCredentials([
-          string(credentialsId: 'skillsewa-mysql-root-password', variable: 'MYSQL_ROOT_PASSWORD'),
-          string(credentialsId: 'skillsewa-jwt-secret',           variable: 'JWT_SECRET'),
-          string(credentialsId: 'skillsewa-nextauth-secret',      variable: 'NEXTAUTH_SECRET')
+          file(credentialsId: 'skillsewa-env', variable: 'ENV_FILE')
         ]) {
           sh '''
             set -e
+
+            echo "Staging .env from Jenkins secret..."
+            cp "$ENV_FILE" .env
+            chmod 600 .env
 
             echo "Bringing stack up via docker compose..."
             docker compose up -d --build

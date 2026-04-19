@@ -36,7 +36,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "${APP_PORT:-3000}:3000"
+      - "${APP_PORT:-3001}:3001"
     environment:
       NODE_ENV: production
       DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD:-krishna_local}@db:3306/${MYSQL_DATABASE:-skillsewa}

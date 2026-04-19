@@ -31,37 +31,6 @@ pipeline {
       }
     }
 
-    stage('Install Dependencies') {
-      agent {
-        docker {
-          image "${NODE_IMAGE}"
-          reuseNode true
-          args '-u root:root'
-        }
-      }
-      steps {
-        sh '''
-          node -v
-          npm -v
-          npm ci --no-audit --no-fund
-        '''
-      }
-    }
-
-
-    stage('Lint') {
-      agent {
-        docker {
-          image "${NODE_IMAGE}"
-          reuseNode true
-          args '-u root:root'
-        }
-      }
-      steps {
-        sh 'npm run lint || true'
-      }
-    }
-
 
     stage('Docker Build') {
       steps {

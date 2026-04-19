@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A2Z Skill-Sewa · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --white:#FFFFFF; --bg:#F7F8FC; --bg-card:#FFFFFF; --bg-soft:#F2F4F8; --bg-hover:#EEF1F8;
+  --border:#E4E8F0; --border-mid:#D0D7E8;
+  --blue:#4F6EF7; --blue-deep:#3B55E0; --blue-pale:#EEF2FF; --blue-light:#7B94FF;
+  --orange:#FF6B2B; --orange-pale:#FFF4EF; --orange-mid:#FF8C5A;
+  --green:#16A34A; --green-pale:#EFFAF4; --green-mid:#22C55E;
+  --purple:#7C3AED; --purple-pale:#F5F0FF; --purple-mid:#A78BFA;
+  --amber:#D97706; --amber-pale:#FFFBEB;
+  --red:#DC2626; --red-pale:#FEF2F2;
+  --text-1:#0F172A; --text-2:#475569; --text-3:#94A3B8; --text-4:#CBD5E1;
+  --sidebar-w:252px; --topbar-h:62px; --radius:16px; --radius-sm:10px;
+  --shadow-sm:0 1px 3px rgba(15,23,42,0.07),0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md:0 4px 16px rgba(15,23,42,0.08),0 1px 4px rgba(15,23,42,0.04);
+  --shadow-lg:0 8px 32px rgba(15,23,42,0.10),0 2px 8px rgba(15,23,42,0.04);
+  --shadow-blue:0 4px 16px rgba(79,110,247,0.22);
+}
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text-1); min-height:100vh; display:flex; font-size:14px; -webkit-font-smoothing:antialiased; }
+
+/* SIDEBAR */
+.sidebar { width:var(--sidebar-w); min-height:100vh; background:var(--white); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; left:0;top:0;bottom:0; z-index:200; padding-bottom:20px; box-shadow:var(--shadow-sm); }
+.sidebar-logo { padding:20px 18px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.logo-badge { width:38px;height:38px; background:linear-gradient(135deg,var(--blue),var(--blue-deep)); border-radius:11px; display:flex;align-items:center;justify-content:center; font-family:'Sora',sans-serif; font-size:11px;font-weight:800;color:white;letter-spacing:0.5px; box-shadow:var(--shadow-blue); flex-shrink:0; }
+.logo-name { font-family:'Sora',sans-serif; font-size:15px;font-weight:700;color:var(--text-1); }
+.logo-tagline { font-size:10px;color:var(--text-3);font-weight:400;margin-top:1px; }
+.sidebar-section { padding:20px 12px 6px; }
+.sidebar-group-label { font-size:9.5px;font-weight:700;color:var(--text-4);letter-spacing:1.4px;text-transform:uppercase;padding:0 8px 10px; }
+.nav-item { display:flex;align-items:center;gap:9px; padding:9px 10px;border-radius:var(--radius-sm); cursor:pointer;transition:all 0.15s ease; font-size:13.5px;font-weight:500;color:var(--text-2); margin-bottom:1px;position:relative; }
+.nav-item svg { flex-shrink:0;opacity:0.65; }
+.nav-item:hover { background:var(--bg-hover);color:var(--text-1); }
+.nav-item:hover svg { opacity:1; }
+.nav-item.active { background:var(--blue-pale);color:var(--blue);font-weight:600; }
+.nav-item.active svg { opacity:1;color:var(--blue); }
+.nav-item.active::before { content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--blue);border-radius:0 3px 3px 0; }
+.nav-badge { margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;min-width:20px;text-align:center;line-height:1.5; }
+.nav-badge.orange { background:#FFF4EF;color:var(--orange); }
+.nav-badge.blue { background:var(--blue-pale);color:var(--blue); }
+.sidebar-footer { margin-top:auto;padding:14px 12px 0;border-top:1px solid var(--border); }
+.user-row { display:flex;align-items:center;gap:9px;padding:10px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s; }
+.user-row:hover { background:var(--bg-hover); }
+.user-av { width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;font-family:'Sora',sans-serif; }
+.user-name { font-size:13px;font-weight:600;color:var(--text-1); }
+.user-role { font-size:10.5px;color:var(--text-3); }
+
+/* MAIN */
+.main { margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column; }
+
+/* TOPBAR */
+.topbar { height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:14px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm); }
+.topbar-heading { font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:var(--text-1); }
+.topbar-sub { font-size:12px;color:var(--text-3);margin-top:1px; }
+.live-pill { display:inline-flex;align-items:center;gap:5px;background:var(--green-pale);border:1px solid rgba(22,163,74,0.2);color:var(--green);border-radius:20px;padding:4px 11px 4px 8px;font-size:11px;font-weight:600; }
+.live-dot { width:6px;height:6px;background:var(--green-mid);border-radius:50%;animation:blink 1.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+.search-box { margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;width:240px;transition:border-color 0.15s; }
+.search-box:focus-within { border-color:var(--blue); }
+.search-box input { background:none;border:none;outline:none;color:var(--text-1);font-size:13px;width:100%;font-family:'DM Sans',sans-serif; }
+.search-box input::placeholder { color:var(--text-3); }
+.top-actions { display:flex;align-items:center;gap:8px; }
+.icon-btn { width:38px;height:38px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;position:relative;color:var(--text-2); }
+.icon-btn:hover { border-color:var(--blue);color:var(--blue);background:var(--blue-pale); }
+.notif-badge { position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--orange);border-radius:50%;border:2px solid var(--white); }
+.btn-primary { display:flex;align-items:center;gap:6px;background:var(--blue);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:var(--shadow-blue);transition:all 0.15s; }
+.btn-primary:hover { background:var(--blue-deep);transform:translateY(-1px); }
+
+/* CONTENT */
+.content { padding:24px 28px;display:flex;flex-direction:column;gap:20px;flex:1; }
+.page-title-row { display:flex;align-items:flex-end;justify-content:space-between; }
+.page-title { font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--text-1); }
+.page-sub { font-size:13px;color:var(--text-3);margin-top:3px; }
+.date-chip { font-size:12px;color:var(--text-2);background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-weight:500; }
+
+/* STAT CARDS */
+.stats-row { display:grid;grid-template-columns:repeat(4,1fr);gap:14px; }
+.stat-card { background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);transition:all 0.2s ease;position:relative;overflow:hidden; }
+.stat-card:hover { box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--border-mid); }
+.stat-top { position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0; }
+.stat-top.blue { background:linear-gradient(90deg,var(--blue),var(--blue-light)); }
+.stat-top.orange { background:linear-gradient(90deg,var(--orange),var(--orange-mid)); }
+.stat-top.green { background:linear-gradient(90deg,var(--green),var(--green-mid)); }
+.stat-top.purple { background:linear-gradient(90deg,var(--purple),var(--purple-mid)); }
+.stat-header { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px; }
+.stat-icon { width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px; }
+.stat-icon.blue { background:var(--blue-pale); } .stat-icon.orange { background:var(--orange-pale); } .stat-icon.green { background:var(--green-pale); } .stat-icon.purple { background:var(--purple-pale); }
+.stat-trend { display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px; }
+.stat-trend.up { background:var(--green-pale);color:var(--green); }
+.stat-trend.down { background:var(--red-pale);color:var(--red); }
+.stat-value { font-family:'Sora',sans-serif;font-size:26px;font-weight:800;color:var(--text-1);line-height:1;margin-bottom:5px;font-variant-numeric:tabular-nums; }
+.stat-label { font-size:12.5px;color:var(--text-3); }
+.stat-footer { margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--text-3); }
+.stat-footer strong { color:var(--text-2);font-weight:600; }
+.sparkline { display:flex;align-items:flex-end;gap:2px;height:24px;margin:10px 0 0; }
+.spark-b { flex:1;border-radius:2px 2px 0 0;opacity:0.55;transition:opacity 0.2s; }
+.stat-card:hover .spark-b { opacity:0.9; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
+.stat-card { animation:fadeUp 0.4s ease both; }
+.stat-card:nth-child(1){animation-delay:0.05s}.stat-card:nth-child(2){animation-delay:0.1s}.stat-card:nth-child(3){animation-delay:0.15s}.stat-card:nth-child(4){animation-delay:0.2s}
+
+/* GRIDS */
+.g2 { display:grid;grid-template-columns:1.55fr 1fr;gap:14px; }
+.g3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px; }
+.g2w { display:grid;grid-template-columns:2fr 1fr;gap:14px; }
+.col { display:flex;flex-direction:column;gap:14px; }
+
+/* CARD */
+.card { background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow 0.2s; }
+.card:hover { box-shadow:var(--shadow-md); }
+.card-head { padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+.card-title { font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--text-1); }
+.card-sub { font-size:12px;color:var(--text-3);margin-top:2px; }
+.card-body { padding:18px 20px; }
+.card-body.np { padding:0; }
+.btn-sm { font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);color:var(--text-2);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif; }
+.btn-sm:hover { border-color:var(--blue);color:var(--blue);background:var(--blue-pale); }
+.btn-sm.f { background:var(--blue);border-color:var(--blue);color:white;box-shadow:var(--shadow-blue); }
+.btn-sm.f:hover { background:var(--blue-deep); }
+
+/* TABLE */
+.jt { width:100%;border-collapse:collapse; }
+.jt thead { background:var(--bg); }
+.jt th { font-size:10.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.9px;padding:11px 16px;text-align:left;border-bottom:1px solid var(--border); }
+.jt td { padding:12px 16px;font-size:13px;color:var(--text-2);border-bottom:1px solid var(--border);transition:background 0.12s; }
+.jt tr:last-child td { border-bottom:none; }
+.jt tbody tr:hover td { background:var(--bg); }
+.td-main { font-weight:600;color:var(--text-1);font-size:13px; }
+.td-sub { font-size:11px;color:var(--text-3);margin-top:2px; }
+.cat-tag { display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px; }
+.ct-e { background:var(--blue-pale);color:var(--blue); } .ct-p { background:var(--green-pale);color:var(--green); }
+.ct-c { background:var(--purple-pale);color:var(--purple); } .ct-m { background:var(--orange-pale);color:var(--orange); }
+.ct-i { background:var(--amber-pale);color:var(--amber); }
+.sp { display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:20px; }
+.sp::before { content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0; }
+.sp-l { background:var(--green-pale);color:var(--green); } .sp-l::before { background:var(--green-mid);box-shadow:0 0 4px var(--green-mid); }
+.sp-e { background:var(--amber-pale);color:var(--amber); } .sp-e::before { background:var(--amber); }
+.sp-d { background:var(--bg);color:var(--text-3); } .sp-d::before { background:var(--text-4); }
+.sp-r { background:var(--purple-pale);color:var(--purple); } .sp-r::before { background:var(--purple-mid); }
+.mono { font-family:'DM Mono',monospace;font-size:13px;font-weight:500; }
+
+/* ACTIVITY */
+.act-item { display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border); }
+.act-item:last-child { border-bottom:none; }
+.act-icon { width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0; }
+.act-text { font-size:12.5px;color:var(--text-2);line-height:1.55; }
+.act-text b { color:var(--text-1);font-weight:600; }
+.act-meta { font-size:11px;color:var(--text-3);margin-top:4px;display:flex;align-items:center;gap:6px; }
+.act-tag { font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:var(--bg);color:var(--text-2);border:1px solid var(--border); }
+
+/* WORKERS */
+.wk-item { display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border);transition:all 0.12s; }
+.wk-item:last-child { border-bottom:none; }
+.wk-item:hover { background:var(--bg);margin:0 -20px;padding:10px 20px;border-radius:8px; }
+.wk-av { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:white;flex-shrink:0; }
+.wk-name { font-size:13px;font-weight:600;color:var(--text-1); }
+.wk-cat { font-size:11px;color:var(--text-3);margin-top:1px; }
+.wk-stars { color:#F59E0B;font-size:11px;margin-left:4px; }
+.wk-grade { margin-left:auto;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0; }
+.g-expert { background:var(--green-pale);color:var(--green);border:1px solid rgba(22,163,74,0.2); }
+.g-pro { background:var(--orange-pale);color:var(--orange);border:1px solid rgba(255,107,43,0.2); }
+.g-verified { background:var(--blue-pale);color:var(--blue);border:1px solid rgba(79,110,247,0.2); }
+
+/* PROGRESS */
+.prog-row { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+.prog-row:last-child { margin-bottom:0; }
+.prog-label { font-size:12.5px;color:var(--text-2);width:110px;flex-shrink:0; }
+.prog-track { flex:1;height:7px;background:var(--bg-soft);border-radius:4px;overflow:hidden; }
+.prog-fill { height:100%;border-radius:4px; }
+.prog-val { font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text-1);width:40px;text-align:right; }
+
+/* AI */
+.ai-row { display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border); }
+.ai-row:last-child { border-bottom:none; }
+.ai-name { font-size:12.5px;color:var(--text-2);flex:1; }
+.ai-track { width:90px;height:6px;background:var(--bg-soft);border-radius:3px;overflow:hidden; }
+.ai-fill { height:100%;border-radius:3px; }
+.ai-pct { font-family:'DM Mono',monospace;font-size:12px;font-weight:500;width:44px;text-align:right; }
+
+/* MAP */
+.map-container { background:var(--bg-soft);border-radius:12px;height:200px;position:relative;overflow:hidden; }
+.map-grid-bg { position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:24px 24px;opacity:0.5; }
+.map-pulse { position:absolute;border-radius:50%;animation:mp 2.5s ease-in-out infinite; }
+@keyframes mp { 0%,100%{transform:scale(1);opacity:0.6}50%{transform:scale(1.4);opacity:0.2} }
+.map-dot { position:absolute;border-radius:50%; }
+.map-tooltip { position:absolute;bottom:12px;left:12px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;box-shadow:var(--shadow-md); }
+.map-legend { display:flex;gap:10px;flex-wrap:wrap;margin-top:4px; }
+.map-leg { display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--text-2); }
+.map-leg-dot { width:7px;height:7px;border-radius:50%; }
+.map-count { position:absolute;top:12px;right:12px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text-1);box-shadow:var(--shadow-sm); }
+
+/* ALERTS */
+.alert-row { display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin-bottom:8px;border:1.5px solid; }
+.alert-row:last-child { margin-bottom:0; }
+.ar-warn { background:var(--amber-pale);border-color:rgba(217,119,6,0.2); }
+.ar-error { background:var(--red-pale);border-color:rgba(220,38,38,0.2); }
+.ar-ok { background:var(--green-pale);border-color:rgba(22,163,74,0.2); }
+.ar-info { background:var(--blue-pale);border-color:rgba(79,110,247,0.2); }
+.alert-icon { font-size:15px;flex-shrink:0; }
+.alert-text { font-size:12px;color:var(--text-2);flex:1;line-height:1.5; }
+.alert-text b { color:var(--text-1);font-weight:600; }
+.alert-time { font-size:10.5px;color:var(--text-3);white-space:nowrap; }
+
+/* REVENUE */
+.rev-item { display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border); }
+.rev-item:last-child { border-bottom:none; }
+.rev-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+.rev-info { flex:1;min-width:0; }
+.rev-name { font-size:13px;font-weight:600;color:var(--text-1); }
+.rev-desc { font-size:11px;color:var(--text-3);margin-top:2px; }
+.rev-bar-wrap { width:90px; }
+.rev-bar { height:5px;background:var(--bg-soft);border-radius:3px;overflow:hidden;margin:4px 0 2px; }
+.rev-bar-fill { height:100%;border-radius:3px; }
+.rev-pct { font-size:10px;color:var(--text-3); }
+.rev-amount { font-family:'DM Mono',monospace;font-size:13.5px;font-weight:500;color:var(--text-1);white-space:nowrap; }
+
+/* HEALTH TILES */
+.health-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.health-tile { border-radius:12px;padding:14px;border:1.5px solid; }
+.ht-blue   { background:var(--blue-pale);border-color:rgba(79,110,247,0.18); }
+.ht-green  { background:var(--green-pale);border-color:rgba(22,163,74,0.18); }
+.ht-orange { background:var(--orange-pale);border-color:rgba(255,107,43,0.18); }
+.ht-purple { background:var(--purple-pale);border-color:rgba(124,58,237,0.18); }
+.ht-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px; }
+.ht-blue .ht-label{color:var(--blue)}.ht-green .ht-label{color:var(--green)}.ht-orange .ht-label{color:var(--orange)}.ht-purple .ht-label{color:var(--purple)}
+.ht-val { font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--text-1);margin-top:4px; }
+.ht-sub { font-size:10.5px;color:var(--text-3);margin-top:2px; }
+
+/* QUICK ACTIONS */
+.qa-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.qa-btn { display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:11px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;text-align:left; }
+.qa-btn:hover { border-color:var(--blue);background:var(--blue-pale); }
+.qa-btn:hover .qa-arr { opacity:1;color:var(--blue); }
+.qa-icon { font-size:18px;flex-shrink:0; }
+.qa-title { font-size:12.5px;font-weight:600;color:var(--text-1); }
+.qa-sub { font-size:10.5px;color:var(--text-3);margin-top:1px; }
+.qa-arr { margin-left:auto;color:var(--text-4);opacity:0;transition:opacity 0.15s;font-size:14px;font-weight:700; }
+
+/* BAR CHART */
+.bar-chart { display:flex;align-items:flex-end;gap:6px;height:110px;padding-bottom:2px; }
+.bc-col { flex:1;display:flex;flex-direction:column;align-items:center;gap:4px; }
+.bc-bar { width:100%;border-radius:5px 5px 0 0;transition:opacity 0.2s;cursor:pointer;position:relative; }
+.bc-bar:hover { opacity:0.8; }
+.bc-bar::after { content:attr(data-v);position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:600;color:var(--text-1);white-space:nowrap;opacity:0;transition:opacity 0.15s;background:var(--white);padding:1px 5px;border-radius:4px;border:1px solid var(--border); }
+.bc-bar:hover::after { opacity:1; }
+.bc-label { font-size:9.5px;color:var(--text-3);font-weight:500;text-align:center; }
+
+/* DONUT */
+.donut-wrap { display:flex;align-items:center;gap:20px; }
+.leg-item { display:flex;align-items:center;gap:8px;margin-bottom:9px; }
+.leg-item:last-child { margin-bottom:0; }
+.leg-dot { width:9px;height:9px;border-radius:50%;flex-shrink:0; }
+.leg-name { font-size:12px;color:var(--text-2);flex:1; }
+.leg-pct { font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--text-1); }
+
+/* BONUS FUND */
+.fund-outer { background:var(--bg-soft);border-radius:8px;height:10px;overflow:hidden;margin:8px 0 5px; }
+.fund-inner { height:100%;border-radius:8px;background:linear-gradient(90deg,var(--blue),var(--purple)); }
+
+/* KPI MINI */
+.kpi-mini { background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;transition:all 0.15s; }
+.kpi-mini:hover { background:var(--white);border-color:var(--border-mid);box-shadow:var(--shadow-sm); }
+.kpi-mini-val { font-family:'Sora',sans-serif;font-size:21px;font-weight:800;color:var(--text-1);margin-top:4px; }
+.kpi-mini-label { font-size:11px;color:var(--text-3); }
+.kpi-mini-icon { font-size:18px; }
+
+.section-label { font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;display:flex;align-items:center;gap:8px; }
+.section-label::after { content:'';flex:1;height:1px;background:var(--border); }
+
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border-mid);border-radius:3px; }
+.dash-footer { text-align:center;padding:16px 0 6px;font-size:11.5px;color:var(--text-3);border-top:1px solid var(--border);margin-top:4px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">A2Z</div>
+    <div><div class="logo-name">Skill-Sewa</div><div class="logo-tagline">Command Center</div></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-group-label">Overview</div>
+    <div class="nav-item active">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>Live Jobs<span class="nav-badge orange">12</span>
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Bookings<span class="nav-badge blue">3</span>
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Alerts<span class="nav-badge orange">4</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-group-label">People</div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Workers
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Customers
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>Suppliers
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-group-label">Finance</div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Revenue
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Bonus Fund
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-group-label">Platform</div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>AI Engine
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Map View
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-av">SN</div>
+      <div><div class="user-name">Saugat Nepal</div><div class="user-role">Super Admin</div></div>
+      <svg style="margin-left:auto;color:var(--text-3)" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div><div class="topbar-heading">Dashboard</div><div class="topbar-sub">Saturday, 4 Jan 2026 · Kathmandu Valley</div></div>
+    <div class="live-pill" style="margin-left:12px"><div class="live-dot"></div>Live</div>
+    <div class="search-box">
+      <svg width="14" height="14" fill="none" stroke="var(--text-3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input placeholder="Search jobs, workers, suppliers…">
+    </div>
+    <div class="top-actions">
+      <div class="icon-btn"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><div class="notif-badge"></div></div>
+      <div class="icon-btn"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <button class="btn-primary"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Job</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- GREETING -->
+    <div class="page-title-row">
+      <div><div class="page-title">Good morning, Saugat 👋</div><div class="page-sub">Here's what's happening on A2Z Skill-Sewa today</div></div>
+      <div class="date-chip">📅 January 2026 · Pilot Phase</div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-top blue"></div>
+        <div class="stat-header"><div class="stat-icon blue">🔧</div><div class="stat-trend up">↑ 18%</div></div>
+        <div class="stat-value">1,284</div><div class="stat-label">Total Jobs This Month</div>
+        <div class="sparkline"><div class="spark-b" style="height:35%;background:var(--blue)"></div><div class="spark-b" style="height:50%;background:var(--blue)"></div><div class="spark-b" style="height:44%;background:var(--blue)"></div><div class="spark-b" style="height:68%;background:var(--blue)"></div><div class="spark-b" style="height:58%;background:var(--blue)"></div><div class="spark-b" style="height:82%;background:var(--blue)"></div><div class="spark-b" style="height:76%;background:var(--blue)"></div><div class="spark-b" style="height:100%;background:var(--blue)"></div></div>
+        <div class="stat-footer"><strong>+198</strong> more than last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top orange"></div>
+        <div class="stat-header"><div class="stat-icon orange">💰</div><div class="stat-trend up">↑ 24%</div></div>
+        <div class="stat-value">Rs.68.4K</div><div class="stat-label">Platform Revenue</div>
+        <div class="sparkline"><div class="spark-b" style="height:30%;background:var(--orange)"></div><div class="spark-b" style="height:55%;background:var(--orange)"></div><div class="spark-b" style="height:48%;background:var(--orange)"></div><div class="spark-b" style="height:72%;background:var(--orange)"></div><div class="spark-b" style="height:62%;background:var(--orange)"></div><div class="spark-b" style="height:86%;background:var(--orange)"></div><div class="spark-b" style="height:78%;background:var(--orange)"></div><div class="spark-b" style="height:100%;background:var(--orange)"></div></div>
+        <div class="stat-footer">Fees + Commission + <strong>Supplier</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top green"></div>
+        <div class="stat-header"><div class="stat-icon green">👷</div><div class="stat-trend up">↑ 12%</div></div>
+        <div class="stat-value">347</div><div class="stat-label">Active Workers</div>
+        <div class="sparkline"><div class="spark-b" style="height:55%;background:var(--green)"></div><div class="spark-b" style="height:62%;background:var(--green)"></div><div class="spark-b" style="height:68%;background:var(--green)"></div><div class="spark-b" style="height:74%;background:var(--green)"></div><div class="spark-b" style="height:82%;background:var(--green)"></div><div class="spark-b" style="height:88%;background:var(--green)"></div><div class="spark-b" style="height:94%;background:var(--green)"></div><div class="spark-b" style="height:100%;background:var(--green)"></div></div>
+        <div class="stat-footer"><strong>38 pending</strong> verification review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top purple"></div>
+        <div class="stat-header"><div class="stat-icon purple">🛡️</div><div class="stat-trend up">↑ 31%</div></div>
+        <div class="stat-value">Rs.12.7K</div><div class="stat-label">Worker Bonus Fund</div>
+        <div class="sparkline"><div class="spark-b" style="height:20%;background:var(--purple)"></div><div class="spark-b" style="height:38%;background:var(--purple)"></div><div class="spark-b" style="height:52%;background:var(--purple)"></div><div class="spark-b" style="height:62%;background:var(--purple)"></div><div class="spark-b" style="height:72%;background:var(--purple)"></div><div class="spark-b" style="height:84%;background:var(--purple)"></div><div class="spark-b" style="height:92%;background:var(--purple)"></div><div class="spark-b" style="height:100%;background:var(--purple)"></div></div>
+        <div class="stat-footer">Across <strong>347</strong> worker accounts</div>
+      </div>
+    </div>
+
+    <!-- ROW 2 -->
+    <div class="g2">
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Live Job Feed</div><div class="card-sub">Real-time active & recent bookings across Kathmandu</div></div>
+          <button class="btn-sm f">View All →</button>
+        </div>
+        <div class="card-body np">
+          <table class="jt">
+            <thead><tr><th>Customer</th><th>Service</th><th>Worker</th><th>Status</th><th style="text-align:right">Value</th></tr></thead>
+            <tbody>
+              <tr><td><div class="td-main">Sita Sharma</div><div class="td-sub">📍 Baneshwor</div></td><td><span class="cat-tag ct-e">⚡ Electrician</span></td><td>Ram Bahadur</td><td><span class="sp sp-l">In Progress</span></td><td style="text-align:right"><span class="mono" style="color:var(--green)">Rs. 850</span></td></tr>
+              <tr><td><div class="td-main">Arjun KC</div><div class="td-sub">📍 Thamel</div></td><td><span class="cat-tag ct-p">🔧 Plumber</span></td><td>Suresh Tamang</td><td><span class="sp sp-e">En Route</span></td><td style="text-align:right"><span class="mono" style="color:var(--amber)">Rs. 600</span></td></tr>
+              <tr><td><div class="td-main">Priya Acharya</div><div class="td-sub">📍 Lazimpat</div></td><td><span class="cat-tag ct-c">🧹 Cleaner</span></td><td>Anita Rai</td><td><span class="sp sp-d">Completed</span></td><td style="text-align:right"><span class="mono" style="color:var(--text-2)">Rs. 1,200</span></td></tr>
+              <tr><td><div class="td-main">Dipak Gurung</div><div class="td-sub">📍 Maharajgunj</div></td><td><span class="cat-tag ct-m">🔩 Mechanic</span></td><td>Bikash Maharjan</td><td><span class="sp sp-r">In Review</span></td><td style="text-align:right"><span class="mono" style="color:var(--text-2)">Rs. 2,400</span></td></tr>
+              <tr><td><div class="td-main">Kabita Thapa</div><div class="td-sub">📍 Koteshwor</div></td><td><span class="cat-tag ct-i">💻 IT Support</span></td><td>Naresh Joshi</td><td><span class="sp sp-l">In Progress</span></td><td style="text-align:right"><span class="mono" style="color:var(--green)">Rs. 700</span></td></tr>
+              <tr><td><div class="td-main">Rohit Paudel</div><div class="td-sub">📍 Pulchowk</div></td><td><span class="cat-tag" style="background:var(--orange-pale);color:var(--orange)">🎨 Painter</span></td><td>Gopal Shrestha</td><td><span class="sp sp-e">Assigned</span></td><td style="text-align:right"><span class="mono" style="color:var(--amber)">Rs. 3,500</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">Activity Stream</div><div class="card-sub">Platform events in real-time</div></div><div class="live-pill"><div class="live-dot"></div>Live</div></div>
+          <div class="card-body">
+            <div class="act-item"><div class="act-icon" style="background:var(--green-pale)">✅</div><div><div class="act-text"><b>Ram Bahadur</b> completed Electrician job in Baneshwor</div><div class="act-meta">2m ago <span class="act-tag">Commission split triggered</span></div></div></div>
+            <div class="act-item"><div class="act-icon" style="background:var(--blue-pale)">🤖</div><div><div class="act-text">AI matched <b>Suresh Tamang</b> to plumbing job — 1.2 km away</div><div class="act-meta">8m ago <span class="act-tag">94% confidence</span></div></div></div>
+            <div class="act-item"><div class="act-icon" style="background:var(--purple-pale)">⭐</div><div><div class="act-text"><b>Anita Rai</b> received 5★ rating · upgraded to PRO grade</div><div class="act-meta">14m ago <span class="act-tag">Verified → Pro</span></div></div></div>
+            <div class="act-item"><div class="act-icon" style="background:var(--orange-pale)">🏪</div><div><div class="act-text">Supplier referral: <b>Rs. 180 pipe fitting</b> purchased on platform</div><div class="act-meta">22m ago <span class="act-tag">Rs. 3.60 → Bonus Fund</span></div></div></div>
+            <div class="act-item"><div class="act-icon" style="background:var(--amber-pale)">💳</div><div><div class="act-text"><b>Bikash Maharjan</b> withdrew Rs. 1,200 from Bonus Fund</div><div class="act-meta">1h ago <span class="act-tag">Processed via eSewa</span></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">System Alerts</div><button class="btn-sm">Dismiss All</button></div>
+          <div class="card-body">
+            <div class="alert-row ar-warn"><div class="alert-icon">⚠️</div><div class="alert-text"><b>Low coverage</b> — Lalitpur sector needs more Plumbers</div><div class="alert-time">Now</div></div>
+            <div class="alert-row ar-error"><div class="alert-icon">🔴</div><div class="alert-text"><b>Payment timeout</b> on Job #2841 — auto-retry initiated</div><div class="alert-time">4m</div></div>
+            <div class="alert-row ar-ok"><div class="alert-icon">✅</div><div class="alert-text">AI model retrained · accuracy now <b>96.2%</b> (+1.1%)</div><div class="alert-time">1h</div></div>
+            <div class="alert-row ar-info"><div class="alert-icon">📋</div><div class="alert-text"><b>3 new worker applications</b> pending your review</div><div class="alert-time">2h</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3 -->
+    <div class="g3">
+      <!-- REVENUE -->
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Revenue Breakdown</div><div class="card-sub">All 3 streams · January 2026</div></div><button class="btn-sm">Export</button></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">
+            <div class="kpi-mini"><div class="kpi-mini-icon">🔗</div><div class="kpi-mini-val" style="color:var(--blue)">Rs.12.8K</div><div class="kpi-mini-label">Connection Fees</div></div>
+            <div class="kpi-mini"><div class="kpi-mini-icon">🤝</div><div class="kpi-mini-val" style="color:var(--orange)">Rs.42.5K</div><div class="kpi-mini-label">Service Commission</div></div>
+            <div class="kpi-mini"><div class="kpi-mini-icon">🏪</div><div class="kpi-mini-val" style="color:var(--green)">Rs.13.1K</div><div class="kpi-mini-label">Supplier Referrals</div></div>
+            <div class="kpi-mini" style="background:var(--blue-pale);border-color:rgba(79,110,247,0.2)"><div class="kpi-mini-icon">📊</div><div class="kpi-mini-val">Rs.68.4K</div><div class="kpi-mini-label">Total This Month</div></div>
+          </div>
+          <div class="section-label">Monthly Trend (Rs. '000s)</div>
+          <div class="bar-chart">
+            <div class="bc-col"><div class="bc-bar" style="height:10%;background:var(--blue);opacity:0.35" data-v="12"></div><div class="bc-label">Pilot</div></div>
+            <div class="bc-col"><div class="bc-bar" style="height:18%;background:var(--blue);opacity:0.45" data-v="22"></div><div class="bc-label">Q2</div></div>
+            <div class="bc-col"><div class="bc-bar" style="height:28%;background:var(--blue);opacity:0.55" data-v="34"></div><div class="bc-label">Apr</div></div>
+            <div class="bc-col"><div class="bc-bar" style="height:38%;background:var(--blue);opacity:0.65" data-v="46"></div><div class="bc-label">May</div></div>
+            <div class="bc-col"><div class="bc-bar" style="height:45%;background:var(--blue);opacity:0.75" data-v="55"></div><div class="bc-label">Jun</div></div>
+            <div class="bc-col"><div class="bc-bar" style="height:55%;background:var(--blue);opacity:0.85" data-v="67"></div><div class="bc-label">Jul</div></div>
+            <div class="bc-col"><div class="bc-bar" style="height:100%;background:linear-gradient(180deg,var(--orange),var(--blue))" data-v="68.4K"></div><div class="bc-label" style="color:var(--blue);font-weight:700">Now</div></div>
+          </div>
+          <div class="section-label" style="margin-top:18px">Stream Breakdown</div>
+          <div class="rev-item"><div class="rev-icon" style="background:var(--blue-pale)">🔗</div><div class="rev-info"><div class="rev-name">Connection Fee</div><div class="rev-desc">1,284 requests × Rs. 10</div></div><div class="rev-bar-wrap"><div class="rev-bar"><div class="rev-bar-fill" style="width:19%;background:var(--blue)"></div></div><div class="rev-pct">19% of total</div></div><div class="rev-amount" style="color:var(--blue)">Rs.12.8K</div></div>
+          <div class="rev-item"><div class="rev-icon" style="background:var(--orange-pale)">🤝</div><div class="rev-info"><div class="rev-name">Service Commission (5%)</div><div class="rev-desc">Avg job value Rs. 850</div></div><div class="rev-bar-wrap"><div class="rev-bar"><div class="rev-bar-fill" style="width:62%;background:var(--orange)"></div></div><div class="rev-pct">62% of total</div></div><div class="rev-amount" style="color:var(--orange)">Rs.42.5K</div></div>
+          <div class="rev-item"><div class="rev-icon" style="background:var(--green-pale)">🏪</div><div class="rev-info"><div class="rev-name">Supplier Referral (1%)</div><div class="rev-desc">143 part orders this month</div></div><div class="rev-bar-wrap"><div class="rev-bar"><div class="rev-bar-fill" style="width:19%;background:var(--green)"></div></div><div class="rev-pct">19% of total</div></div><div class="rev-amount" style="color:var(--green)">Rs.13.1K</div></div>
+        </div>
+      </div>
+
+      <!-- WORKERS + BONUS FUND -->
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Top Workers</div><div class="card-sub">By grade & performance</div></div><button class="btn-sm">See All</button></div>
+        <div class="card-body">
+          <div class="wk-item"><div class="wk-av" style="background:linear-gradient(135deg,#7C3AED,#4F6EF7)">RB</div><div><div class="wk-name">Ram Bahadur</div><div class="wk-cat">⚡ Electrician · Baneshwor</div></div><div class="wk-stars">★ 4.9</div><div class="wk-grade g-expert">Expert</div></div>
+          <div class="wk-item"><div class="wk-av" style="background:linear-gradient(135deg,var(--orange),#FF8C5A)">AR</div><div><div class="wk-name">Anita Rai</div><div class="wk-cat">🧹 Cleaner · Thamel</div></div><div class="wk-stars">★ 4.8</div><div class="wk-grade g-pro">Pro</div></div>
+          <div class="wk-item"><div class="wk-av" style="background:linear-gradient(135deg,var(--green),#16A34A)">ST</div><div><div class="wk-name">Suresh Tamang</div><div class="wk-cat">🔧 Plumber · Lalitpur</div></div><div class="wk-stars">★ 4.7</div><div class="wk-grade g-pro">Pro</div></div>
+          <div class="wk-item"><div class="wk-av" style="background:linear-gradient(135deg,var(--blue),#3B55E0)">BM</div><div><div class="wk-name">Bikash Maharjan</div><div class="wk-cat">🔩 Mechanic · Patan</div></div><div class="wk-stars">★ 4.6</div><div class="wk-grade g-verified">Verified</div></div>
+          <div class="wk-item"><div class="wk-av" style="background:linear-gradient(135deg,#94A3B8,#64748B)">NJ</div><div><div class="wk-name">Naresh Joshi</div><div class="wk-cat">💻 IT Support · Bhaktapur</div></div><div class="wk-stars">★ 4.5</div><div class="wk-grade g-verified">Verified</div></div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div class="section-label">🛡️ Bonus Fund</div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px"><span style="font-size:12px;color:var(--text-3)">Total Accumulated</span><span style="font-family:'DM Mono';font-size:14px;font-weight:600;color:var(--blue)">Rs. 12,740</span></div>
+            <div class="fund-outer"><div class="fund-inner" style="width:52%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)"><span>Available: Rs. 6,820</span><span>Reserved: Rs. 5,920</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px">
+              <div style="background:var(--blue-pale);border-radius:9px;padding:9px 12px;border:1px solid rgba(79,110,247,0.15)"><div style="font-size:10px;color:var(--blue);font-weight:700">FROM COMMISSION</div><div style="font-family:'DM Mono';font-size:14px;font-weight:600;color:var(--text-1);margin-top:2px">Rs.10,250</div></div>
+              <div style="background:var(--green-pale);border-radius:9px;padding:9px 12px;border:1px solid rgba(22,163,74,0.15)"><div style="font-size:10px;color:var(--green);font-weight:700">FROM SUPPLIER</div><div style="font-family:'DM Mono';font-size:14px;font-weight:600;color:var(--text-1);margin-top:2px">Rs.2,490</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI + MAP + ACTIONS -->
+      <div class="col">
+        <div class="card">
+          <div class="card-head"><div><div class="card-title">AI Engine</div><div class="card-sub">Live model performance</div></div><div class="live-pill"><div class="live-dot"></div>Active</div></div>
+          <div class="card-body">
+            <div class="ai-row"><div class="ai-name">Classification Accuracy</div><div class="ai-track"><div class="ai-fill" style="width:96%;background:var(--blue)"></div></div><div class="ai-pct" style="color:var(--blue)">96.2%</div></div>
+            <div class="ai-row"><div class="ai-name">Match Success Rate</div><div class="ai-track"><div class="ai-fill" style="width:89%;background:var(--green)"></div></div><div class="ai-pct" style="color:var(--green)">89.4%</div></div>
+            <div class="ai-row"><div class="ai-name">Avg Response Time</div><div class="ai-track"><div class="ai-fill" style="width:72%;background:var(--amber)"></div></div><div class="ai-pct" style="color:var(--amber)">1.8s</div></div>
+            <div class="ai-row"><div class="ai-name">Voice Input (Nepali)</div><div class="ai-track"><div class="ai-fill" style="width:82%;background:var(--purple)"></div></div><div class="ai-pct" style="color:var(--purple)">82%</div></div>
+            <div class="ai-row"><div class="ai-name">Fraud Detection</div><div class="ai-track"><div class="ai-fill" style="width:99%;background:var(--green)"></div></div><div class="ai-pct" style="color:var(--green)">99%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Live Coverage Map</div><div style="font-size:11px;color:var(--text-3)">Kathmandu Valley</div></div>
+          <div class="card-body" style="padding:12px 16px">
+            <div class="map-container">
+              <div class="map-grid-bg"></div>
+              <div class="map-pulse" style="width:52px;height:52px;top:38%;left:32%;background:rgba(79,110,247,0.1);border:1.5px solid rgba(79,110,247,0.3)"></div>
+              <div class="map-pulse" style="width:38px;height:38px;top:54%;left:60%;background:rgba(255,107,43,0.1);border:1.5px solid rgba(255,107,43,0.3);animation-delay:0.5s"></div>
+              <div class="map-pulse" style="width:44px;height:44px;top:22%;left:54%;background:rgba(22,163,74,0.1);border:1.5px solid rgba(22,163,74,0.3);animation-delay:1s"></div>
+              <div class="map-dot" style="width:10px;height:10px;top:41%;left:35%;background:var(--blue);box-shadow:0 0 8px var(--blue)"></div>
+              <div class="map-dot" style="width:10px;height:10px;top:57%;left:62%;background:var(--orange);box-shadow:0 0 8px var(--orange)"></div>
+              <div class="map-dot" style="width:10px;height:10px;top:25%;left:57%;background:var(--green);box-shadow:0 0 8px var(--green)"></div>
+              <div class="map-dot" style="width:8px;height:8px;top:66%;left:26%;background:var(--purple);box-shadow:0 0 6px var(--purple)"></div>
+              <div class="map-dot" style="width:8px;height:8px;top:33%;left:72%;background:var(--amber);box-shadow:0 0 6px var(--amber)"></div>
+              <div class="map-tooltip"><div style="font-weight:600;color:var(--text-1);font-size:12px;margin-bottom:4px">Active Workers</div><div class="map-legend"><div class="map-leg"><div class="map-leg-dot" style="background:var(--blue)"></div>Electrician</div><div class="map-leg"><div class="map-leg-dot" style="background:var(--orange)"></div>Plumber</div><div class="map-leg"><div class="map-leg-dot" style="background:var(--green)"></div>Cleaner</div></div></div>
+              <div class="map-count">247 live</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Quick Actions</div></div>
+          <div class="card-body">
+            <div class="qa-grid">
+              <button class="qa-btn"><div class="qa-icon">✅</div><div><div class="qa-title">Verify Worker</div><div class="qa-sub">3 pending</div></div><div class="qa-arr">›</div></button>
+              <button class="qa-btn"><div class="qa-icon">📢</div><div><div class="qa-title">Broadcast</div><div class="qa-sub">All workers</div></div><div class="qa-arr">›</div></button>
+              <button class="qa-btn"><div class="qa-icon">💸</div><div><div class="qa-title">Fund Payout</div><div class="qa-sub">2 requests</div></div><div class="qa-arr">›</div></button>
+              <button class="qa-btn"><div class="qa-icon">📊</div><div><div class="qa-title">Export Report</div><div class="qa-sub">Monthly PDF</div></div><div class="qa-arr">›</div></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4 -->
+    <div class="g2w">
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">Category Performance</div><div class="card-sub">Jobs completed this month by service type</div></div><span style="font-family:'DM Mono';font-size:13px;font-weight:600;color:var(--text-1)">1,284 total</span></div>
+        <div class="card-body">
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div class="prog-row"><div class="prog-label">⚡ Electrician</div><div class="prog-track"><div class="prog-fill" style="width:100%;background:var(--blue)"></div></div><div class="prog-val">284</div></div>
+            <div class="prog-row"><div class="prog-label">🔧 Plumber</div><div class="prog-track"><div class="prog-fill" style="width:85%;background:var(--green)"></div></div><div class="prog-val">241</div></div>
+            <div class="prog-row"><div class="prog-label">🧹 Cleaner</div><div class="prog-track"><div class="prog-fill" style="width:70%;background:var(--purple)"></div></div><div class="prog-val">198</div></div>
+            <div class="prog-row"><div class="prog-label">🔩 Mechanic</div><div class="prog-track"><div class="prog-fill" style="width:59%;background:var(--orange)"></div></div><div class="prog-val">167</div></div>
+            <div class="prog-row"><div class="prog-label">💻 IT Support</div><div class="prog-track"><div class="prog-fill" style="width:50%;background:var(--amber)"></div></div><div class="prog-val">143</div></div>
+            <div class="prog-row"><div class="prog-label">🎨 Painter</div><div class="prog-track"><div class="prog-fill" style="width:39%;background:#06B6D4"></div></div><div class="prog-val">112</div></div>
+            <div class="prog-row"><div class="prog-label">🪚 Carpenter</div><div class="prog-track"><div class="prog-fill" style="width:31%;background:#EC4899"></div></div><div class="prog-val">89</div></div>
+            <div class="prog-row"><div class="prog-label">🌿 Others</div><div class="prog-track"><div class="prog-fill" style="width:18%;background:#10B981"></div></div><div class="prog-val">50</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Service Distribution</div></div>
+          <div class="card-body">
+            <div class="donut-wrap">
+              <svg width="108" height="108" viewBox="0 0 108 108" style="flex-shrink:0">
+                <circle cx="54" cy="54" r="38" fill="none" stroke="var(--bg-soft)" stroke-width="16"/>
+                <circle cx="54" cy="54" r="38" fill="none" stroke="#4F6EF7" stroke-width="16" stroke-dasharray="53 186" stroke-dashoffset="60" stroke-linecap="round"/>
+                <circle cx="54" cy="54" r="38" fill="none" stroke="#16A34A" stroke-width="16" stroke-dasharray="45 194" stroke-dashoffset="7" stroke-linecap="round"/>
+                <circle cx="54" cy="54" r="38" fill="none" stroke="#7C3AED" stroke-width="16" stroke-dasharray="37 202" stroke-dashoffset="-38" stroke-linecap="round"/>
+                <circle cx="54" cy="54" r="38" fill="none" stroke="#FF6B2B" stroke-width="16" stroke-dasharray="31 208" stroke-dashoffset="-75" stroke-linecap="round"/>
+                <circle cx="54" cy="54" r="38" fill="none" stroke="#D97706" stroke-width="16" stroke-dasharray="73 166" stroke-dashoffset="-106" stroke-linecap="round"/>
+                <text x="54" y="50" text-anchor="middle" font-size="14" font-weight="800" fill="var(--text-1)" font-family="Sora,sans-serif">1,284</text>
+                <text x="54" y="62" text-anchor="middle" font-size="8.5" fill="var(--text-3)" font-family="DM Sans,sans-serif">total jobs</text>
+              </svg>
+              <div style="flex:1">
+                <div class="leg-item"><div class="leg-dot" style="background:#4F6EF7"></div><div class="leg-name">Electrician</div><div class="leg-pct">22%</div></div>
+                <div class="leg-item"><div class="leg-dot" style="background:#16A34A"></div><div class="leg-name">Plumber</div><div class="leg-pct">19%</div></div>
+                <div class="leg-item"><div class="leg-dot" style="background:#7C3AED"></div><div class="leg-name">Cleaner</div><div class="leg-pct">15%</div></div>
+                <div class="leg-item"><div class="leg-dot" style="background:#FF6B2B"></div><div class="leg-name">Mechanic</div><div class="leg-pct">13%</div></div>
+                <div class="leg-item"><div class="leg-dot" style="background:#D97706"></div><div class="leg-name">Others</div><div class="leg-pct">31%</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Platform Health</div></div>
+          <div class="card-body">
+            <div class="health-grid">
+              <div class="health-tile ht-green"><div class="ht-label">Customer Rating</div><div class="ht-val">4.7 ★</div><div class="ht-sub">892 reviews</div></div>
+              <div class="health-tile ht-blue"><div class="ht-label">Repeat Rate</div><div class="ht-val">67%</div><div class="ht-sub">Customers rebooked</div></div>
+              <div class="health-tile ht-orange"><div class="ht-label">Avg Match Time</div><div class="ht-val">4.2m</div><div class="ht-sub">Request → confirm</div></div>
+              <div class="health-tile ht-purple"><div class="ht-label">Worker Retention</div><div class="ht-val">84%</div><div class="ht-sub">Active after 60 days</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-footer">A2Z Skill-Sewa Command Center · v2.0 · Kathmandu Valley, Nepal · 2025 &nbsp;·&nbsp; Made with ❤️ for Workers</div>
+  </div>
+</div>
+</body>
+</html>

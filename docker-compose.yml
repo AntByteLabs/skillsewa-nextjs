@@ -1,0 +1,74 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: skillsewa-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-krishna_local}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-skillsewa}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - skillsewa-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-krishna_local}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: skillsewa:latest
+    container_name: skillsewa-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD:-krishna_local}@db:3306/${MYSQL_DATABASE:-skillsewa}
+      JWT_SECRET: ${JWT_SECRET:-skillsewa-local-jwt-secret-please-change}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-skillsewa-local-nextauth-secret-please-change}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-Skill-Sewa}
+      CONNECTION_FEE: ${CONNECTION_FEE:-10}
+      SERVICE_COMMISSION_RATE: ${SERVICE_COMMISSION_RATE:-0.10}
+      PLATFORM_SHARE_RATE: ${PLATFORM_SHARE_RATE:-0.05}
+      WORKER_BONUS_SHARE_RATE: ${WORKER_BONUS_SHARE_RATE:-0.05}
+      SUPPLIER_REFERRAL_RATE: ${SUPPLIER_REFERRAL_RATE:-0.02}
+      SUPPLIER_PLATFORM_SHARE: ${SUPPLIER_PLATFORM_SHARE:-0.01}
+      SUPPLIER_WORKER_BONUS_SHARE: ${SUPPLIER_WORKER_BONUS_SHARE:-0.01}
+      MIN_WITHDRAWAL_AMOUNT: ${MIN_WITHDRAWAL_AMOUNT:-500}
+      WORKER_SEARCH_RADIUS_KM: ${WORKER_SEARCH_RADIUS_KM:-5}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      RUN_SEED: ${RUN_SEED:-false}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  skillsewa-db-data:

@@ -53,7 +53,7 @@ RUN chmod +x /entrypoint.sh
 
 USER nextjs
 
-EXPOSE 3000
+EXPOSE 3001
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD wget -qO- "http://127.0.0.1:${PORT}/" > /dev/null 2>&1 || exit 1

@@ -13,7 +13,7 @@ pipeline {
     COMPOSE_PROJECT_NAME = 'skillsewa'
     WEB_CONTAINER = 'skillsewa-web'
     DB_CONTAINER  = 'skillsewa-db'
-    PORT         = '3000'
+    PORT         = '3001'
     NODE_IMAGE   = 'node:22-alpine'
     NEXT_TELEMETRY_DISABLED = '1'
 

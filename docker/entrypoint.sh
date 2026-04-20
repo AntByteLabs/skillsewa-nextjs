@@ -25,13 +25,13 @@ fi
 # ─── Push schema ────────────────────────────────────────────
 if [ "${RUN_MIGRATIONS:-true}" = "true" ] && [ -n "${DATABASE_URL}" ]; then
   echo "[entrypoint] Pushing Prisma schema to database..."
-  ./node_modules/.bin/prisma db push --skip-generate --accept-data-loss
+  node ./node_modules/prisma/build/index.js db push --skip-generate --accept-data-loss
 fi
 
 # ─── Optional seed ──────────────────────────────────────────
 if [ "${RUN_SEED:-false}" = "true" ] && [ -n "${DATABASE_URL}" ]; then
   echo "[entrypoint] Seeding database..."
-  ./node_modules/.bin/tsx prisma/seed.ts || echo "[entrypoint] Seed failed (continuing)."
+  node ./node_modules/tsx/dist/cli.mjs prisma/seed.ts || echo "[entrypoint] Seed failed (continuing)."
 fi
 
 exec "$@"
